@@ -1,13 +1,13 @@
 ---
 name: seo-blade-analysis
-description: Use when asked to scan or fix SEO issues in Laravel projects that use Blade templates (HTML structure) plus technical SEO files. Not for non-Laravel stacks or general SEO strategy. Outputs JSON only and supports optional safe fixes.
+description: Use when asked to scan or fix SEO issues in Laravel projects that use Blade templates (HTML structure) plus technical SEO files. Not for non-Laravel stacks or general SEO strategy. Produces JSON output and can provide brief follow-up guidance in the Codex app unless JSON-only is requested.
 ---
 
 # Seo Blade Analysis
 
 ## Overview
 
-Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML structure) plus technical SEO files and configuration. Ignore Blade syntax and treat dynamic variables as placeholders when assessing content. The script output is JSON-only. After showing JSON, you may add a brief, human-friendly follow-up (questions + next-step suggestions) unless the user explicitly requested JSON-only or raw output. If user asks to fix, apply safe automatic fixes.
+Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML structure) plus technical SEO files and configuration. Ignore Blade syntax and treat dynamic variables as placeholders when assessing content. The script output is JSON-only. After showing JSON in the Codex app, add a brief, human-friendly follow-up (questions + next-step suggestions) unless the user explicitly requested JSON-only or raw output. If user asks to fix, apply safe automatic fixes.
 
 ## Workflow
 
@@ -26,9 +26,10 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
 6. Produce JSON with per-file issues, summary counts, and scoring. No prose in the JSON.
    - Default output is a compact JSON summary plus file list with score and issue count.
    - Use `--full` to return full per-file issues and `project_issues`.
-7. If the user did not request raw/JSON-only output, add a short follow-up after the JSON:
+7. If the user did not request raw/JSON-only output, add a short follow-up after the JSON (Codex app only):
    - Ask 2-3 concise questions (e.g., which file to expand, whether to apply fixes).
    - Suggest the exact flag(s) to use next (e.g., `--full --file`, `--project-issues`).
+   - Do not repeat the full JSON in the follow-up.
 
 ## Checks
 

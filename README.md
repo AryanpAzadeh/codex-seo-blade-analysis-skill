@@ -96,7 +96,7 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --project-issues
 - خروجی پیش‌فرض خلاصه است: `summary` + لیست فایل‌ها با `score` و `issues_count`.
 - با `--full` خروجی کامل per-file و `project_issues` برمی‌گردد.
 - فیلد `assistant_followup` سوالات و راهنمایی برای خواندن JSON ارائه می‌کند.
-- اگر از Skill داخل Codex App استفاده می‌کنید، ممکن است بعد از JSON یک پیام کوتاه راهنما/سوال نمایش داده شود. برای خروجی کاملاً خام، صریحاً بگویید «JSON-only».
+- اگر از Skill داخل Codex App استفاده می‌کنید، بعد از JSON یک پیام کوتاه راهنما/سوال نمایش داده می‌شود. برای خروجی کاملاً خام، صریحاً بگویید «JSON-only».
 
 ## Fix Mode چه کار می‌کند؟
 
