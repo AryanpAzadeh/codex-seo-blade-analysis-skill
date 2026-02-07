@@ -48,6 +48,7 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
 #### 4. Missing Meta Description
 
 - Require `<meta name="description" content="...">` with non-empty content.
+- Suggest if description length is outside 120-160 characters.
 
 #### 5. Canonical Quality
 
@@ -84,7 +85,7 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
 #### 10. Duplicate Titles or Descriptions (Project-wide)
 
 - Collect titles and meta descriptions across views.
-- Flag duplicates with a project-wide issue referencing all files.
+- Flag duplicates with a project-wide issue in `project_issues` referencing all files.
 
 #### 11. Structured Data (JSON-LD)
 

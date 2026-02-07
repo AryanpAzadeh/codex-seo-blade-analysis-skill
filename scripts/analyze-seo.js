@@ -40,7 +40,7 @@ function addIssue(target, issue) {
 
 function stripBlade(raw) {
   return raw
-    .replace(/@(?:if|elseif|else|endif|foreach|endforeach|for|endfor|while|endwhile|switch|case|break|default|endswitch|extends|section|endsection|yield|include|includeIf|includeWhen|includeUnless|stack|push|endpush|prepend|endprepend|csrf|method|vite|once|endonce|production|endproduction|verbatim|endverbatim)\b[^\n]*/g, "")
+    .replace(/@(?:if|elseif|else|endif|foreach|endforeach|for|endfor|while|endwhile|switch|case|break|default|endswitch|extends|section|endsection|yield|include|includeIf|includeWhen|includeUnless|stack|push|endpush|prepend|endprepend|csrf|method|vite|once|endonce|production|endproduction|verbatim|endverbatim|php|endphp|auth|endauth|guest|endguest|props|pushonce|endpushonce)\b[^\n]*/gi, "")
     .replace(/\{\{[\s\S]*?\}\}/g, DYNAMIC)
     .replace(/\{!![\s\S]*?!!\}/g, DYNAMIC);
 }
@@ -284,6 +284,14 @@ function scanHtml(html, fileReport, appUrl) {
   for (const property of ogRequired) {
     const tag = head?.querySelector(`meta[property="${property}"]`);
     const value = tag?.getAttribute("content")?.trim() || "";
+    if (property === "og:type") {
+      if (!tag) {
+        addIssue(fileReport, { type: "missing_og", severity: "warning", message: "Missing OpenGraph og:type.", details: { property }, line: null });
+      } else if (!value) {
+        addIssue(fileReport, { type: "missing_og", severity: "error", message: "OpenGraph og:type is empty.", details: { property }, line: null });
+      }
+      continue;
+    }
     if (!value) {
       addIssue(fileReport, { type: "missing_og", severity: "error", message: `Missing OpenGraph ${property}.`, details: { property }, line: null });
     }
@@ -337,8 +345,10 @@ function scanHtml(html, fileReport, appUrl) {
 
   root.querySelectorAll("a").forEach((anchor) => {
     const href = anchor.getAttribute("href")?.trim() || "";
-    const text = textContent(anchor).replace(DYNAMIC, "").trim();
-    if (!text) {
+    const rawText = textContent(anchor);
+    const hasDynamic = rawText.includes(DYNAMIC);
+    const text = rawText.replace(DYNAMIC, "").trim();
+    if (!text && !hasDynamic) {
       addIssue(fileReport, { type: "empty_anchor", severity: "error", message: "Anchor has no text.", details: {}, line: null });
     }
     if (!href || href === "#" || href.toLowerCase() === "javascript:void(0)") {
@@ -537,11 +547,11 @@ async function scanHttpPages(appUrl) {
     return;
   }
   const routes = extractStaticRoutes();
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
 
   for (const route of routes) {
     const url = `${appUrl}${route}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
     try {
       const response = await fetch(url, { signal: controller.signal });
       if (!response.ok) {
@@ -564,10 +574,10 @@ async function scanHttpPages(appUrl) {
       files.push(fileReport);
     } catch {
       continue;
+    } finally {
+      clearTimeout(timeout);
     }
   }
-
-  clearTimeout(timeout);
 }
 
 function scanRobots(appUrl) {
@@ -714,23 +724,13 @@ function runProjectWideChecks() {
 
   titleMap.forEach((paths) => {
     if (paths.length > 1) {
-      paths.forEach((filePath) => {
-        const file = files.find((entry) => entry.path === filePath);
-        if (file) {
-          addIssue(file, { type: "duplicate_title", severity: "warning", message: "Duplicate <title> across views.", details: { files: paths }, line: null });
-        }
-      });
+      issues.push({ type: "duplicate_title", severity: "warning", message: "Duplicate <title> across views.", details: { files: paths } });
     }
   });
 
   descriptionMap.forEach((paths) => {
     if (paths.length > 1) {
-      paths.forEach((filePath) => {
-        const file = files.find((entry) => entry.path === filePath);
-        if (file) {
-          addIssue(file, { type: "duplicate_meta_description", severity: "warning", message: "Duplicate meta description across views.", details: { files: paths }, line: null });
-        }
-      });
+      issues.push({ type: "duplicate_meta_description", severity: "warning", message: "Duplicate meta description across views.", details: { files: paths } });
     }
   });
 
