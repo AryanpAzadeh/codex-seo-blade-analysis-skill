@@ -1,0 +1,4 @@
+interface:
+  display_name: "SEO Blade Analyzer"
+  short_description: "Scan Blade templates for SEO structural issues and output JSON."
+  default_prompt: "Scan the provided Blade templates for SEO issues and return JSON only."
