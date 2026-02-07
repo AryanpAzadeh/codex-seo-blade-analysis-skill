@@ -27,8 +27,9 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
    - Default output is a compact JSON summary plus file list with score and issue count.
    - Use `--full` to return full per-file issues and `project_issues`.
 7. If the user did not request raw/JSON-only output, add a short follow-up after the JSON (Codex app only):
-   - Ask 2-3 concise questions (e.g., which file to expand, whether to apply fixes).
-   - Suggest the exact flag(s) to use next (e.g., `--full --file`, `--project-issues`).
+   - Present 2-3 numbered options so the user can reply with just a number.
+   - Keep each option short and action-oriented (e.g., expand a file, include project issues, apply fixes).
+   - If the user picks a number, run the corresponding command with the right flags.
    - Do not repeat the full JSON in the follow-up.
    - Do not embed follow-up content inside the JSON.
 
