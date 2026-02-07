@@ -95,8 +95,7 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --project-issues
 - The output schema is defined in `SKILL.md`.
 - Default output is compact: `summary` + file list with `score` and `issues_count`.
 - Use `--full` to return full per-file issues and `project_issues`.
-- The `assistant_followup` field includes questions and tips to help interpret the JSON.
-- When using the Skill inside the Codex App, a short follow-up message is shown after the JSON. If you need raw output only, explicitly ask for “JSON-only”.
+- When using the Skill inside the Codex App, a short follow-up message is shown after the JSON. This message is separate from the JSON. If you need raw output only, explicitly ask for “JSON-only”.
 
 ## What Fix Mode Does
 

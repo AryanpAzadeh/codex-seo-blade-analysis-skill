@@ -30,6 +30,7 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
    - Ask 2-3 concise questions (e.g., which file to expand, whether to apply fixes).
    - Suggest the exact flag(s) to use next (e.g., `--full --file`, `--project-issues`).
    - Do not repeat the full JSON in the follow-up.
+   - Do not embed follow-up content inside the JSON.
 
 ## Checks
 
@@ -240,7 +241,7 @@ Optional flags:
 - `--limit N` / `--offset N`: paginate the file list.
 
 Interactive helper:
-- `assistant_followup`: A JSON block with follow-up questions and tips to help users interpret results.
+- Follow-up guidance should be shown as a separate assistant message in the Codex app (not inside JSON).
 
 ## Resources
 
