@@ -1,6 +1,6 @@
 ---
 name: seo-blade-analysis
-description: Comprehensive SEO auditing and fixing for Laravel web projects (Blade templates + technical SEO files). Use when asked to scan or fix SEO issues in a Laravel codebase, including headings, image alts, metadata, canonical, OpenGraph, internal links, thin content, structured data, robots.txt, sitemap.xml, hreflang, and redirects, with JSON-only output.
+description: Use when asked to scan or fix SEO issues in Laravel projects that use Blade templates (HTML structure) plus technical SEO files. Not for non-Laravel stacks or general SEO strategy. Outputs JSON only and supports optional safe fixes.
 ---
 
 # Seo Blade Analysis

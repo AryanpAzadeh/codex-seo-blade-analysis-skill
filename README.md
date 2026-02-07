@@ -92,10 +92,10 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http --app-url https:/
 
 اگر می‌خواهید این Skill را به Codex اضافه کنید:
 
-1. نصب سریع (یک‌خطی):
+1. نصب سریع (یک‌خطی) در مسیر استاندارد کاربر:
 
 ```bash
-git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$CODEX_HOME/skills/seo-blade-analysis"
+git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$HOME/.agents/skills/seo-blade-analysis"
 ```
 
 2. مطمئن شوید فایل `SKILL.md` در همان مسیر است.
@@ -105,6 +105,16 @@ git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$C
 chmod +x scripts/analyze-seo.js
 ```
 
+### نصب با Skill Installer
+
+اگر Skill Installer در دسترس است:
+
+```bash
+$skill-installer install https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill
+```
+
+Codex به صورت پیش‌فرض Skillها را از مسیرهای `.agents/skills` (در سطح پروژه یا کاربر) می‌خواند. اگر پس از نصب Skill در لیست نبود، Codex را ری‌استارت کنید.
+
 ## منابع
 
 - قوانین سئو: `references/seo-rules.md`
@@ -113,4 +123,4 @@ chmod +x scripts/analyze-seo.js
 
 ## لایسنس
 
-این پروژه تحت لایسنس MIT منتشر شده است و استفاده در هر نوع پروژه (شخصی، تجاری، متن‌باز) مجاز است. جزئیات در فایل `LICENSE` آمده است.
+این پروژه تحت لایسنس MIT منتشر شده است و استفاده در هر نوع پروژه (شخصی، تجاری، متن‌باز) مجاز است. جزئیات در فایل‌های `LICENSE` و `LICENSE.txt` آمده است.

@@ -92,10 +92,10 @@ Content quality, headings, hreflang, and structured data are not auto-edited.
 
 To install this skill into Codex:
 
-1. One-line install:
+1. One-line install (standard user path):
 
 ```bash
-git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$CODEX_HOME/skills/seo-blade-analysis"
+git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$HOME/.agents/skills/seo-blade-analysis"
 ```
 
 2. Ensure `SKILL.md` is in the same folder.
@@ -105,6 +105,16 @@ git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$C
 chmod +x scripts/analyze-seo.js
 ```
 
+### Install With Skill Installer
+
+If the Skill Installer is available:
+
+```bash
+$skill-installer install https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill
+```
+
+By default, Codex discovers skills from `.agents/skills` (project-level or user-level). If the skill does not appear after install, restart Codex.
+
 ## Resources
 
 - SEO rules: `references/seo-rules.md`
@@ -113,4 +123,4 @@ chmod +x scripts/analyze-seo.js
 
 ## License
 
-This project is licensed under the MIT License and can be used in any type of project (personal, commercial, or open source). See `LICENSE`.
+This project is licensed under the MIT License and can be used in any type of project (personal, commercial, or open source). See `LICENSE` and `LICENSE.txt`.

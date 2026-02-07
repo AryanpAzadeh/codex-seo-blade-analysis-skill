@@ -1,4 +1,4 @@
 interface:
-  display_name: "SEO Blade Analyzer"
-  short_description: "Scan Blade templates for SEO structural issues and output JSON."
-  default_prompt: "Scan the provided Blade templates for SEO issues and return JSON only."
+  display_name: "SEO Blade Analysis"
+  short_description: "Audit Laravel Blade SEO (templates + technical files). JSON output."
+  default_prompt: "Scan this Laravel project for SEO issues in Blade templates and technical SEO files. Return JSON only."
