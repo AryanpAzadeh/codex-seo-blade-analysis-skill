@@ -989,6 +989,37 @@ async function run() {
     }
   }
 
+  report.assistant_followup = {
+    intent: "help_interpret_json",
+    questions: [
+      {
+        id: "need_full_report",
+        question: "Do you want the full report for any specific file?",
+        suggestion: "Run with --full --file <path> to get detailed issues for one file.",
+      },
+      {
+        id: "need_top_n",
+        question: "Do you want only the worst N files by score?",
+        suggestion: "Use --limit N with the current run (optionally sort externally).",
+      },
+      {
+        id: "apply_fixes",
+        question: "Do you want safe auto-fixes applied?",
+        suggestion: "Re-run with --fix (consider --full to review changes).",
+      },
+      {
+        id: "include_project_issues",
+        question: "Do you want project-wide issues included in the compact output?",
+        suggestion: "Re-run with --project-issues.",
+      },
+    ],
+    tips: [
+      "Compact output lists files with score and issue count only.",
+      "Use --full to include per-issue details and project_issues.",
+      "Use --file/--only to narrow to a single file.",
+    ],
+  };
+
   console.log(JSON.stringify(report, null, 2));
 }
 

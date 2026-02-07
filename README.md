@@ -95,6 +95,7 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --project-issues
 - ساختار دقیق خروجی در `SKILL.md` توضیح داده شده است.
 - خروجی پیش‌فرض خلاصه است: `summary` + لیست فایل‌ها با `score` و `issues_count`.
 - با `--full` خروجی کامل per-file و `project_issues` برمی‌گردد.
+- فیلد `assistant_followup` سوالات و راهنمایی برای خواندن JSON ارائه می‌کند.
 
 ## Fix Mode چه کار می‌کند؟
 

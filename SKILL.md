@@ -235,6 +235,9 @@ Optional flags:
 - `--file <path>` or `--only <path>`: return only a single file report (exact match or suffix).
 - `--limit N` / `--offset N`: paginate the file list.
 
+Interactive helper:
+- `assistant_followup`: A JSON block with follow-up questions and tips to help users interpret results.
+
 ## Resources
 
 - Use `references/seo-rules.md` for rule definitions and severity defaults.
