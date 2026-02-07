@@ -1,0 +1,111 @@
+# seo-blade-analysis
+
+This repository provides a Codex Skill that performs a comprehensive SEO audit for Laravel projects (Blade templates + technical SEO files). Output is JSON-only, and `--fix` applies safe, minimal fixes.
+
+## Features
+
+- Heading structure checks (H1 + hierarchy)
+- Title and Meta Description checks
+- Canonical validation
+- OpenGraph and Twitter Card coverage
+- Image checks (alt / lazy / dimensions)
+- Links and anchor text quality
+- Thin content detection
+- Structured Data (JSON-LD) validation
+- Duplicate title/description and duplicate content (project-wide)
+- robots.txt and sitemap.xml checks
+- hreflang and mixed content checks
+- 301 redirect hints in `routes/web.php`
+
+## Requirements
+
+- Node.js 18+ (needed for built-in `fetch` in `--http` mode)
+- Access to the Laravel project you want to scan
+
+## Install Dependencies
+
+The script uses `node-html-parser` and `xmldom`. If you run this repo standalone:
+
+```bash
+npm init -y
+npm install node-html-parser xmldom
+```
+
+If you embed the script in your Laravel project, install the dependencies there.
+
+## How To Run
+
+The script uses `process.cwd()` to locate the project root. Run it from the Laravel root, or set `cwd` accordingly.
+
+### Run from a Laravel project
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js
+```
+
+### Run with safe fixes (`--fix`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --fix
+```
+
+### Run against rendered pages (`--http`)
+
+This requires the Laravel app to be running and `APP_URL` set correctly.
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http
+```
+
+### Override APP_URL
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http --app-url https://your-app.test
+```
+
+## Output
+
+- Output is JSON only (printed to stdout).
+- The output schema is defined in `SKILL.md`.
+- `files` contains per-file issues.
+- `project_issues` contains project-wide issues and technical SEO issues.
+
+## What Fix Mode Does
+
+Only safe automatic fixes are applied:
+
+- Add `alt` to images missing it
+- Add `<title>` and `<meta name="description">` placeholders
+- Add OpenGraph and Twitter placeholders
+- Add canonical with `{{ url()->current() }}`
+- Create `public/robots.txt` and `public/sitemap.xml` if missing
+
+Content quality, headings, hreflang, and structured data are not auto-edited.
+
+## Limitations
+
+- Blade is analyzed statically; dynamic values become `__DYNAMIC__`.
+- `--http` only discovers simple static routes in `routes/web.php`.
+- Heuristics can produce false positives; manual review is still recommended.
+
+## Install As A Codex Skill
+
+To install this skill into Codex:
+
+1. Copy this repo into `$CODEX_HOME/skills/seo-blade-analysis`.
+2. Ensure `SKILL.md` is in the same folder.
+3. If needed:
+
+```bash
+chmod +x scripts/analyze-seo.js
+```
+
+## Resources
+
+- SEO rules: `references/seo-rules.md`
+- Skill definition + output: `SKILL.md`
+- Scanner script: `scripts/analyze-seo.js`
+
+## License
+
+This project is licensed under the MIT License and can be used in any type of project (personal, commercial, or open source). See `LICENSE`.
