@@ -7,7 +7,7 @@ description: Use when asked to scan or fix SEO issues in Laravel projects that u
 
 ## Overview
 
-Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML structure) plus technical SEO files and configuration. Ignore Blade syntax and treat dynamic variables as placeholders when assessing content. Always return JSON only. If user asks to fix, apply safe automatic fixes.
+Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML structure) plus technical SEO files and configuration. Ignore Blade syntax and treat dynamic variables as placeholders when assessing content. The script output is JSON-only. After showing JSON, you may add a brief, human-friendly follow-up (questions + next-step suggestions) unless the user explicitly requested JSON-only or raw output. If user asks to fix, apply safe automatic fixes.
 
 ## Workflow
 
@@ -23,9 +23,12 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
    - Replace `{{ ... }}` and `{!! ... !!}` with `__DYNAMIC__`.
 4. Parse normalized HTML and run the checks in the order below.
 5. Parse technical SEO files and route config checks in the order below.
-6. Produce JSON with per-file issues, summary counts, and scoring. No prose.
+6. Produce JSON with per-file issues, summary counts, and scoring. No prose in the JSON.
    - Default output is a compact JSON summary plus file list with score and issue count.
    - Use `--full` to return full per-file issues and `project_issues`.
+7. If the user did not request raw/JSON-only output, add a short follow-up after the JSON:
+   - Ask 2-3 concise questions (e.g., which file to expand, whether to apply fixes).
+   - Suggest the exact flag(s) to use next (e.g., `--full --file`, `--project-issues`).
 
 ## Checks
 
