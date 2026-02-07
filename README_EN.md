@@ -96,6 +96,7 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --project-issues
 - Default output is compact: `summary` + file list with `score` and `issues_count`.
 - Use `--full` to return full per-file issues and `project_issues`.
 - When using the Skill inside the Codex App, a short follow-up with numbered options is shown after the JSON so the user can reply with a number. This message is separate from the JSON. If you need raw output only, explicitly ask for “JSON-only”.
+- In full output (`--full`), each issue includes a `fix` field with a suggested manual remediation.
 
 ## What Fix Mode Does
 

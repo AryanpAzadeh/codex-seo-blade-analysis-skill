@@ -218,6 +218,7 @@ Full schema (`--full`):
           "type": "missing_title",
           "severity": "error",
           "message": "Missing or empty <title> in <head>.",
+          "fix": "Add a non-empty <title> inside <head>.",
           "details": {},
           "line": null
         }

@@ -40,7 +40,127 @@ function getArgValue(flag) {
 }
 
 function addIssue(target, issue) {
+  if (!issue.fix) {
+    issue.fix = fixSuggestion(issue.type, issue.details || {});
+  }
   target.issues.push(issue);
+}
+
+function fixSuggestion(type, details) {
+  switch (type) {
+    case "missing_h1":
+      return "Add a single <h1> that reflects the primary page topic.";
+    case "multiple_h1":
+      return "Keep only one <h1> and convert the rest to <h2>/<h3> as needed.";
+    case "heading_starts_not_h1":
+      return "Ensure the first heading on the page is an <h1>.";
+    case "heading_jump":
+      return "Fix heading order so levels only increase by one (e.g., h2 -> h3).";
+    case "missing_title":
+      return "Add a non-empty <title> inside <head>.";
+    case "missing_meta_description":
+      return "Add a meta description: <meta name=\"description\" content=\"...\">.";
+    case "meta_description_length":
+      return "Adjust meta description length to ~120-160 characters.";
+    case "missing_canonical":
+      return "Add a canonical link: <link rel=\"canonical\" href=\"https://...\">.";
+    case "canonical_not_absolute":
+      return "Use an absolute canonical URL (include https://domain).";
+    case "canonical_http":
+      return "Use HTTPS in the canonical URL.";
+    case "canonical_has_query":
+      return "Remove query parameters from the canonical URL when possible.";
+    case "canonical_base_mismatch":
+      return "Ensure canonical starts with the app base URL.";
+    case "canonical_path_mismatch":
+      return "Align the canonical path with the actual route/view path.";
+    case "multiple_canonical":
+      return "Keep only one canonical tag per page.";
+    case "missing_og":
+      return `Add OpenGraph meta tag for ${details.property || "the missing property"}.`;
+    case "missing_og_locale":
+      return "Add og:locale (e.g., fa_IR).";
+    case "missing_og_site_name":
+      return "Add og:site_name with your brand/site name.";
+    case "missing_twitter":
+      return `Add Twitter meta tag for ${details.name || "the missing property"}.`;
+    case "missing_twitter_site":
+      return "Add twitter:site (e.g., @yourhandle).";
+    case "img_missing_alt":
+      return "Add a descriptive alt attribute to the image.";
+    case "img_generic_alt":
+      return "Replace generic alt text with a descriptive phrase.";
+    case "img_missing_dimensions":
+      return "Add width and height attributes for the image.";
+    case "img_missing_lazy":
+      return "Add loading=\"lazy\" to non-critical images.";
+    case "empty_anchor":
+      return "Add descriptive anchor text (avoid empty links).";
+    case "empty_href":
+      return "Provide a valid href target (avoid # or javascript:void(0)).";
+    case "generic_anchor_text":
+      return "Replace generic anchor text with descriptive text.";
+    case "non_seo_slug":
+      return "Use lowercase, hyphenated slugs without underscores.";
+    case "thin_content":
+      return "Expand the page with more meaningful visible text content.";
+    case "missing_json_ld":
+      return "Add JSON-LD structured data appropriate to the page type.";
+    case "invalid_json_ld":
+      return "Fix JSON-LD syntax to valid JSON.";
+    case "json_ld_missing_field":
+      return `Add required field "${details.key || "field"}" to JSON-LD ${details.type || "schema"}.`;
+    case "json_ld_product_offers":
+      return "Ensure Product offers include price, priceCurrency, and availability.";
+    case "json_ld_breadcrumbs":
+      return "Include position, name, and item in each BreadcrumbList element.";
+    case "missing_hreflang_default":
+      return "Add hreflang=\"x-default\" when using hreflang alternates.";
+    case "mixed_content":
+      return "Replace http:// URLs with https:// in SEO-related tags.";
+    case "orphan_page":
+      return "Add internal links pointing to this page from relevant pages.";
+    case "deep_page":
+      return "Add stronger internal links to reduce depth or improve discovery.";
+    case "duplicate_content":
+      return "Differentiate content or consolidate similar pages with canonicals.";
+    case "duplicate_title":
+      return "Make <title> tags unique per page.";
+    case "duplicate_meta_description":
+      return "Make meta descriptions unique per page.";
+    case "meta_robots_noindex":
+      return "Remove noindex/nofollow if the page should be indexed.";
+    case "missing_robots":
+      return "Create public/robots.txt with User-agent and Sitemap directives.";
+    case "robots_missing_user_agent":
+      return "Add a User-agent directive to robots.txt.";
+    case "robots_missing_sitemap":
+      return "Add a Sitemap URL to robots.txt.";
+    case "robots_disallow_all":
+      return "Remove Disallow: / for User-agent * if indexing is desired.";
+    case "robots_sitemap_mismatch":
+      return "Update robots.txt Sitemap URL to match the app base URL.";
+    case "missing_sitemap":
+      return "Create public/sitemap.xml with valid URLs.";
+    case "invalid_sitemap_xml":
+      return "Fix sitemap XML formatting errors.";
+    case "missing_sitemap_index":
+      return "Create a sitemap index when multiple sitemaps exist.";
+    case "sitemap_missing_loc":
+      return "Add <loc> to each sitemap entry.";
+    case "sitemap_missing_lastmod":
+      return "Add <lastmod> to each sitemap entry.";
+    case "sitemap_missing_changefreq":
+      return "Add <changefreq> to each sitemap entry.";
+    case "sitemap_missing_priority":
+      return "Add <priority> to each sitemap entry.";
+    case "sitemap_loc_mismatch":
+      return "Ensure sitemap URLs match the app base URL.";
+    case "redirect_not_301":
+      return "Use a 301 for permanent redirects (Route::redirect(..., 301)).";
+    default:
+      return "Review this issue and apply an appropriate fix.";
+  }
 }
 
 function stripBlade(raw) {
