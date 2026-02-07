@@ -115,6 +115,28 @@ $skill-installer install https://github.com/AryanpAzadeh/codex-seo-blade-analysi
 
 By default, Codex discovers skills from `.agents/skills` (project-level or user-level). If the skill does not appear after install, restart Codex.
 
+## Updating The Skill
+
+If you installed via `git clone`, run `git pull` in the skill folder:
+
+```bash
+cd "$HOME/.agents/skills/seo-blade-analysis"
+git pull
+```
+
+If the skill is installed inside a project:
+
+```bash
+cd /path/to/project/.agents/skills/seo-blade-analysis
+git pull
+```
+
+If installed via `$skill-installer`, re-run the install command:
+
+```bash
+$skill-installer install https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill
+```
+
 ## Resources
 
 - SEO rules: `references/seo-rules.md`

@@ -115,6 +115,28 @@ $skill-installer install https://github.com/AryanpAzadeh/codex-seo-blade-analysi
 
 Codex به صورت پیش‌فرض Skillها را از مسیرهای `.agents/skills` (در سطح پروژه یا کاربر) می‌خواند. اگر پس از نصب Skill در لیست نبود، Codex را ری‌استارت کنید.
 
+## آپدیت Skill
+
+اگر Skill را با `git clone` نصب کرده‌اید، کافی است در همان پوشه `git pull` بزنید:
+
+```bash
+cd "$HOME/.agents/skills/seo-blade-analysis"
+git pull
+```
+
+اگر Skill داخل یک پروژه نصب شده است:
+
+```bash
+cd /path/to/project/.agents/skills/seo-blade-analysis
+git pull
+```
+
+اگر با `$skill-installer` نصب شده، همان دستور نصب را دوباره اجرا کنید:
+
+```bash
+$skill-installer install https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill
+```
+
 ## منابع
 
 - قوانین سئو: `references/seo-rules.md`
