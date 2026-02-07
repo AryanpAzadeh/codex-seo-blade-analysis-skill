@@ -91,6 +91,10 @@ function lineNumberAt(text, index) {
   return text.slice(0, index).split("\n").length;
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function normalizePath(input) {
   if (!input) return null;
   const stripped = input.split("#")[0].split("?")[0];
@@ -428,65 +432,151 @@ function applyFixes(filePath, raw, fileReport) {
     fileReport.fixes_applied.push({ type, detail, line: lineNumberAt(updated, index) });
   };
 
+  const insertIntoHead = (snippet, type, detail) => {
+    const headMatch = updated.match(/<head[^>]*>/i);
+    if (!headMatch) return false;
+    const insertIndex = updated.indexOf(headMatch[0]) + headMatch[0].length;
+    updated = `${updated.slice(0, insertIndex)}\n    ${snippet}${updated.slice(insertIndex)}`;
+    addFix(type, detail, insertIndex);
+    changed = true;
+    return true;
+  };
+
   if (fileReport.issues.some((issue) => issue.type === "img_missing_alt")) {
     const imgRegex = /<img\b(?![^>]*\balt=)[^>]*>/gi;
-    updated = updated.replace(imgRegex, (match) => {
+    updated = updated.replace(imgRegex, (match, offset) => {
       changed = true;
-      addFix("img_alt", "Inserted alt placeholder.", updated.indexOf(match));
+      addFix("img_alt", "Inserted alt placeholder.", offset);
       return match.replace(/<img\b/, '<img alt="TODO: describe image"');
     });
   }
 
   if (fileReport.issues.some((issue) => issue.type === "missing_title")) {
-    const headMatch = updated.match(/<head[^>]*>/i);
-    if (headMatch) {
-      const insertIndex = updated.indexOf(headMatch[0]) + headMatch[0].length;
-      updated = `${updated.slice(0, insertIndex)}\n    <title>TODO</title>${updated.slice(insertIndex)}`;
-      addFix("title", "Inserted <title> placeholder.", insertIndex);
-      changed = true;
+    const titleRegex = /<title\b[^>]*>([\s\S]*?)<\/title>/i;
+    if (titleRegex.test(updated)) {
+      let updatedOnce = false;
+      updated = updated.replace(titleRegex, (match, inner, offset) => {
+        if (updatedOnce) return match;
+        updatedOnce = true;
+        if (inner && inner.trim()) return match;
+        addFix("title", "Filled empty <title> placeholder.", offset);
+        changed = true;
+        return match.replace(inner, "TODO");
+      });
+    } else {
+      insertIntoHead("<title>TODO</title>", "title", "Inserted <title> placeholder.");
     }
   }
 
   if (fileReport.issues.some((issue) => issue.type === "missing_meta_description")) {
-    const headMatch = updated.match(/<head[^>]*>/i);
-    if (headMatch) {
-      const insertIndex = updated.indexOf(headMatch[0]) + headMatch[0].length;
-      updated = `${updated.slice(0, insertIndex)}\n    <meta name=\"description\" content=\"TODO\">${updated.slice(insertIndex)}`;
-      addFix("meta_description", "Inserted meta description placeholder.", insertIndex);
-      changed = true;
+    const metaRegex = /<meta\b[^>]*name=["']description["'][^>]*>/i;
+    if (metaRegex.test(updated)) {
+      let updatedOnce = false;
+      updated = updated.replace(metaRegex, (match, offset) => {
+        if (updatedOnce) return match;
+        updatedOnce = true;
+        const contentMatch = match.match(/content=["']([^"']*)["']/i);
+        if (contentMatch && contentMatch[1].trim()) return match;
+        const replacement = contentMatch
+          ? match.replace(/content=["'][^"']*["']/i, 'content="TODO"')
+          : match.replace(/<meta\b/i, '<meta content="TODO"');
+        addFix("meta_description", "Filled meta description placeholder.", offset);
+        changed = true;
+        return replacement;
+      });
+    } else {
+      insertIntoHead('<meta name="description" content="TODO">', "meta_description", "Inserted meta description placeholder.");
     }
   }
 
   if (fileReport.issues.some((issue) => issue.type === "missing_canonical")) {
-    const headMatch = updated.match(/<head[^>]*>/i);
-    if (headMatch) {
-      const insertIndex = updated.indexOf(headMatch[0]) + headMatch[0].length;
-      updated = `${updated.slice(0, insertIndex)}\n    <link rel=\"canonical\" href=\"{{ url()->current() }}\">${updated.slice(insertIndex)}`;
-      addFix("canonical", "Inserted canonical placeholder.", insertIndex);
-      changed = true;
+    const canonicalRegex = /<link\b[^>]*rel=["']canonical["'][^>]*>/i;
+    if (canonicalRegex.test(updated)) {
+      let updatedOnce = false;
+      updated = updated.replace(canonicalRegex, (match, offset) => {
+        if (updatedOnce) return match;
+        updatedOnce = true;
+        const hrefMatch = match.match(/href=["']([^"']*)["']/i);
+        if (hrefMatch && hrefMatch[1].trim()) return match;
+        const replacement = hrefMatch
+          ? match.replace(/href=["'][^"']*["']/i, 'href="{{ url()->current() }}"')
+          : match.replace(/<link\b/i, '<link href="{{ url()->current() }}"');
+        addFix("canonical", "Filled canonical placeholder.", offset);
+        changed = true;
+        return replacement;
+      });
+    } else {
+      insertIntoHead('<link rel="canonical" href="{{ url()->current() }}">', "canonical", "Inserted canonical placeholder.");
     }
   }
 
   if (fileReport.issues.some((issue) => issue.type === "missing_og")) {
-    const headMatch = updated.match(/<head[^>]*>/i);
-    if (headMatch) {
-      const insertIndex = updated.indexOf(headMatch[0]) + headMatch[0].length;
-      const snippet = "\n    <meta property=\"og:title\" content=\"TODO\">\n    <meta property=\"og:description\" content=\"TODO\">\n    <meta property=\"og:url\" content=\"{{ url()->current() }}\">\n    <meta property=\"og:type\" content=\"website\">\n    <meta property=\"og:image\" content=\"TODO\">";
-      updated = `${updated.slice(0, insertIndex)}${snippet}${updated.slice(insertIndex)}`;
-      addFix("opengraph", "Inserted OpenGraph placeholders.", insertIndex);
-      changed = true;
-    }
+    const ogDefaults = {
+      "og:title": "TODO",
+      "og:description": "TODO",
+      "og:url": "{{ url()->current() }}",
+      "og:type": "website",
+      "og:image": "TODO",
+    };
+    const ogMissing = fileReport.issues
+      .filter((issue) => issue.type === "missing_og")
+      .map((issue) => issue.details?.property)
+      .filter(Boolean);
+    const ogTargets = ogMissing.length ? ogMissing : Object.keys(ogDefaults);
+    ogTargets.forEach((property) => {
+      const regex = new RegExp(`<meta\\b[^>]*property=["']${escapeRegExp(property)}["'][^>]*>`, "i");
+      if (regex.test(updated)) {
+        let updatedOnce = false;
+        updated = updated.replace(regex, (match, offset) => {
+          if (updatedOnce) return match;
+          updatedOnce = true;
+          const contentMatch = match.match(/content=["']([^"']*)["']/i);
+          if (contentMatch && contentMatch[1].trim()) return match;
+          const replacement = contentMatch
+            ? match.replace(/content=["'][^"']*["']/i, `content="${ogDefaults[property]}"`)
+            : match.replace(/<meta\b/i, `<meta content="${ogDefaults[property]}"`);
+          addFix("opengraph", `Filled ${property} placeholder.`, offset);
+          changed = true;
+          return replacement;
+        });
+      } else {
+        insertIntoHead(`<meta property="${property}" content="${ogDefaults[property]}">`, "opengraph", `Inserted ${property} placeholder.`);
+      }
+    });
   }
 
   if (fileReport.issues.some((issue) => issue.type === "missing_twitter")) {
-    const headMatch = updated.match(/<head[^>]*>/i);
-    if (headMatch) {
-      const insertIndex = updated.indexOf(headMatch[0]) + headMatch[0].length;
-      const snippet = "\n    <meta name=\"twitter:card\" content=\"summary_large_image\">\n    <meta name=\"twitter:title\" content=\"TODO\">\n    <meta name=\"twitter:description\" content=\"TODO\">\n    <meta name=\"twitter:image\" content=\"TODO\">";
-      updated = `${updated.slice(0, insertIndex)}${snippet}${updated.slice(insertIndex)}`;
-      addFix("twitter", "Inserted Twitter placeholders.", insertIndex);
-      changed = true;
-    }
+    const twitterDefaults = {
+      "twitter:card": "summary_large_image",
+      "twitter:title": "TODO",
+      "twitter:description": "TODO",
+      "twitter:image": "TODO",
+    };
+    const twitterMissing = fileReport.issues
+      .filter((issue) => issue.type === "missing_twitter")
+      .map((issue) => issue.details?.name)
+      .filter(Boolean);
+    const twitterTargets = twitterMissing.length ? twitterMissing : Object.keys(twitterDefaults);
+    twitterTargets.forEach((name) => {
+      const regex = new RegExp(`<meta\\b[^>]*name=["']${escapeRegExp(name)}["'][^>]*>`, "i");
+      if (regex.test(updated)) {
+        let updatedOnce = false;
+        updated = updated.replace(regex, (match, offset) => {
+          if (updatedOnce) return match;
+          updatedOnce = true;
+          const contentMatch = match.match(/content=["']([^"']*)["']/i);
+          if (contentMatch && contentMatch[1].trim()) return match;
+          const replacement = contentMatch
+            ? match.replace(/content=["'][^"']*["']/i, `content="${twitterDefaults[name]}"`)
+            : match.replace(/<meta\b/i, `<meta content="${twitterDefaults[name]}"`);
+          addFix("twitter", `Filled ${name} placeholder.`, offset);
+          changed = true;
+          return replacement;
+        });
+      } else {
+        insertIntoHead(`<meta name="${name}" content="${twitterDefaults[name]}">`, "twitter", `Inserted ${name} placeholder.`);
+      }
+    });
   }
 
   if (changed) {
@@ -798,19 +888,25 @@ function jaccard(setA, setB) {
   return union === 0 ? 0 : intersection / union;
 }
 
-function scoreFile(file) {
+function scoreIssues(list) {
   let score = 100;
-  file.issues.forEach((issue) => {
+  list.forEach((issue) => {
     if (issue.severity === "error") score -= 10;
     if (issue.severity === "warning") score -= 5;
     if (issue.severity === "suggestion") score -= 2;
   });
-  file.score = Math.max(0, Math.min(100, score));
+  return Math.max(0, Math.min(100, score));
 }
 
-function scoreProject(files) {
+function scoreFile(file) {
+  file.score = scoreIssues(file.issues);
+}
+
+function scoreProject(files, projectIssues) {
   const total = files.reduce((sum, file) => sum + file.score, 0);
-  return files.length ? Math.round(total / files.length) : 100;
+  const base = files.length ? Math.round(total / files.length) : 100;
+  const projectPenalty = 100 - scoreIssues(projectIssues || []);
+  return Math.max(0, Math.min(100, base - projectPenalty));
 }
 
 async function run() {
@@ -844,7 +940,7 @@ async function run() {
       files_scanned: files.length,
       files_with_issues: files.filter((file) => file.issues.length > 0).length,
       total_issues: files.reduce((sum, file) => sum + file.issues.length, 0) + issues.length,
-      project_score: scoreProject(files),
+      project_score: scoreProject(files, issues),
     },
     files,
     project_issues: issues,
