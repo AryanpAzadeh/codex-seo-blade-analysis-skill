@@ -92,7 +92,12 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http --app-url https:/
 
 اگر می‌خواهید این Skill را به Codex اضافه کنید:
 
-1. فولدر این ریپو را داخل `$CODEX_HOME/skills/seo-blade-analysis` قرار دهید.
+1. نصب سریع (یک‌خطی):
+
+```bash
+git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$CODEX_HOME/skills/seo-blade-analysis"
+```
+
 2. مطمئن شوید فایل `SKILL.md` در همان مسیر است.
 3. در صورت نیاز:
 

@@ -92,7 +92,12 @@ Content quality, headings, hreflang, and structured data are not auto-edited.
 
 To install this skill into Codex:
 
-1. Copy this repo into `$CODEX_HOME/skills/seo-blade-analysis`.
+1. One-line install:
+
+```bash
+git clone https://github.com/AryanpAzadeh/codex-seo-blade-analysis-skill.git "$CODEX_HOME/skills/seo-blade-analysis"
+```
+
 2. Ensure `SKILL.md` is in the same folder.
 3. If needed:
 
