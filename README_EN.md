@@ -43,6 +43,8 @@ The script uses `process.cwd()` to locate the project root. Run it from the Lara
 node /path/to/seo-blade-analysis/scripts/analyze-seo.js
 ```
 
+By default, the output is compact (summary + file list with score and issue count).
+
 ### Run with safe fixes (`--fix`)
 
 ```bash
@@ -63,12 +65,36 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http
 node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http --app-url https://your-app.test
 ```
 
+### Full output (`--full`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --full
+```
+
+### Single file output (`--file` or `--only`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --full --file resources/views/home.blade.php
+```
+
+### Paginate file list (`--limit` / `--offset`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --limit 20 --offset 0
+```
+
+### Include project issues in compact output
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --project-issues
+```
+
 ## Output
 
 - Output is JSON only (printed to stdout).
 - The output schema is defined in `SKILL.md`.
-- `files` contains per-file issues.
-- `project_issues` contains project-wide issues and technical SEO issues.
+- Default output is compact: `summary` + file list with `score` and `issues_count`.
+- Use `--full` to return full per-file issues and `project_issues`.
 
 ## What Fix Mode Does
 

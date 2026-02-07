@@ -43,6 +43,8 @@ npm install node-html-parser xmldom
 node /path/to/seo-blade-analysis/scripts/analyze-seo.js
 ```
 
+به صورت پیش‌فرض خروجی خلاصه است (summary + لیست فایل‌ها با score و تعداد issues).
+
 ### اجرا با اصلاحات امن (`--fix`)
 
 ```bash
@@ -63,12 +65,36 @@ node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http
 node /path/to/seo-blade-analysis/scripts/analyze-seo.js --http --app-url https://your-app.test
 ```
 
+### خروجی کامل (`--full`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --full
+```
+
+### خروجی فقط برای یک فایل (`--file` یا `--only`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --full --file resources/views/home.blade.php
+```
+
+### صفحه‌بندی لیست فایل‌ها (`--limit` / `--offset`)
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --limit 20 --offset 0
+```
+
+### اضافه کردن project_issues در خروجی خلاصه
+
+```bash
+node /path/to/seo-blade-analysis/scripts/analyze-seo.js --project-issues
+```
+
 ## خروجی
 
 - خروجی فقط JSON است و روی stdout چاپ می‌شود.
 - ساختار دقیق خروجی در `SKILL.md` توضیح داده شده است.
-- فیلدهای `files` شامل جزئیات per-file هستند.
-- فیلد `project_issues` شامل مسائل پروژه‌ای (مثل duplicate title/description) و مسائل تکنیکال است.
+- خروجی پیش‌فرض خلاصه است: `summary` + لیست فایل‌ها با `score` و `issues_count`.
+- با `--full` خروجی کامل per-file و `project_issues` برمی‌گردد.
 
 ## Fix Mode چه کار می‌کند؟
 

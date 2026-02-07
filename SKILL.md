@@ -24,6 +24,8 @@ Perform a full SEO audit for Laravel projects. Analyze Blade templates (HTML str
 4. Parse normalized HTML and run the checks in the order below.
 5. Parse technical SEO files and route config checks in the order below.
 6. Produce JSON with per-file issues, summary counts, and scoring. No prose.
+   - Default output is a compact JSON summary plus file list with score and issue count.
+   - Use `--full` to return full per-file issues and `project_issues`.
 
 ## Checks
 
@@ -171,7 +173,27 @@ Score 0-100 per file and project-wide:
 
 ## Output JSON
 
-Return JSON only. Schema:
+Return JSON only. Default schema (compact):
+
+```json
+{
+  "summary": {
+    "files_scanned": 0,
+    "files_with_issues": 0,
+    "total_issues": 0,
+    "project_score": 0
+  },
+  "files": [
+    {
+      "path": "path/to/view.blade.php",
+      "score": 0,
+      "issues_count": 0
+    }
+  ]
+}
+```
+
+Full schema (`--full`):
 
 ```json
 {
@@ -206,6 +228,12 @@ Return JSON only. Schema:
   "project_issues": []
 }
 ```
+
+Optional flags:
+- `--full`: return full per-file issues and `project_issues`.
+- `--project-issues`: include `project_issues` in compact mode.
+- `--file <path>` or `--only <path>`: return only a single file report (exact match or suffix).
+- `--limit N` / `--offset N`: paginate the file list.
 
 ## Resources
 

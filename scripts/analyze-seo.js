@@ -17,6 +17,11 @@ const args = process.argv.slice(2);
 const fixMode = args.includes("--fix");
 const useHttp = args.includes("--http");
 const appUrlArg = getArgValue("--app-url");
+const fullMode = args.includes("--full");
+const includeProjectIssues = args.includes("--project-issues");
+const onlyFileArg = getArgValue("--file") || getArgValue("--only");
+const limitArg = getArgValue("--limit");
+const offsetArg = getArgValue("--offset");
 
 const issues = [];
 const files = [];
@@ -93,6 +98,12 @@ function lineNumberAt(text, index) {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function parseInteger(value) {
+  if (value === null || value === undefined) return null;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 function normalizePath(input) {
@@ -942,9 +953,41 @@ async function run() {
       total_issues: files.reduce((sum, file) => sum + file.issues.length, 0) + issues.length,
       project_score: scoreProject(files, issues),
     },
-    files,
-    project_issues: issues,
   };
+
+  const limit = parseInteger(limitArg);
+  const offset = Math.max(0, parseInteger(offsetArg) || 0);
+
+  const filtered = onlyFileArg
+    ? files.filter((file) => file.path === onlyFileArg || file.path.endsWith(onlyFileArg))
+    : files.slice();
+
+  const offsetApplied = offset > 0 ? filtered.slice(offset) : filtered;
+  const limited = limit !== null && limit >= 0 ? offsetApplied.slice(0, limit) : offsetApplied;
+
+  if (onlyFileArg || limit !== null || offset > 0) {
+    report.summary.listing = {
+      total_files: files.length,
+      returned_files: limited.length,
+      offset,
+      limit: limit === null ? undefined : limit,
+      filter: onlyFileArg || undefined,
+    };
+  }
+
+  if (fullMode) {
+    report.files = limited;
+    report.project_issues = issues;
+  } else {
+    report.files = limited.map((file) => ({
+      path: file.path,
+      score: file.score,
+      issues_count: file.issues.length,
+    }));
+    if (includeProjectIssues) {
+      report.project_issues = issues;
+    }
+  }
 
   console.log(JSON.stringify(report, null, 2));
 }
